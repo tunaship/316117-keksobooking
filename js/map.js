@@ -81,13 +81,13 @@ function generateAdsData() {
 document.querySelector('.map').classList.remove('map--faded');
 
 function renderMapPin(dataListElem) {
-  var newButton = document.createElement('button');
-  newButton.className = 'map__pin';
-  newButton.style = 'left: ' + (dataListElem.location.x - 20) + 'px; top: ' +
+  var newMapPin = document.createElement('button');
+  newMapPin.className = 'map__pin';
+  newMapPin.style = 'left: ' + (dataListElem.location.x - 20) + 'px; top: ' +
    (dataListElem.location.y - 40 - 18) + 'px;';
-  newButton.innerHTML = '<img src=' + dataListElem.author.avatar +
+  newMapPin.innerHTML = '<img src=' + dataListElem.author.avatar +
    ' width = "40" height = "40" draggable = "false">';
-  return newButton;
+  return newMapPin;
 }
 
 var dataList = generateAdsData();
