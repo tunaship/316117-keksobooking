@@ -7,12 +7,6 @@ var HOUSE_TYPES = ['flat', 'house', 'bungalo'];
 var CHECKIN_HOURS = ['12:00', '13:00', '14:00'];
 var CHECKOUT_HOURS = ['12:00', '13:00', '14:00'];
 var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
-var TYPEHOUSE_MIN_PRICE = {
-  'bungalo': 0,
-  'flat': 1000,
-  'house': 5000,
-  'palace': 10000
-};
 var HOUSE_TYPE_DESCRIPTION = {
   'flat': 'Квартира',
   'bungalo': 'Бунгало',
@@ -23,6 +17,8 @@ var MAP_PIN_WIDTH = 40;
 var MAP_PIN_POINT = 18;
 var ESC_KEYCODE = 27;
 var ENTER_KEYCODE = 13;
+var SYNC_HOUSE_TYPES = ['bungalo', 'flat', 'house', 'palace'];
+var SYNC_ROOM_PRICES = [0, 1000, 5000, 10000];
 
 function getRandomNum(min, max) {
   return Math.floor(Math.random() * (max - min) + min);
@@ -102,8 +98,8 @@ var nextDiv = document.querySelector('.map__filters-container');
 function renderMapPin(offer) {
   var newMapPin = document.createElement('button');
   newMapPin.className = 'map__pin';
-  newMapPin.style = 'left: ' + (offer.location.x - MAP_PIN_WIDTH / 2) + 'px; top: ' +
-    (offer.location.y - MAP_PIN_HEIGHT - MAP_PIN_POINT) + 'px;';
+  newMapPin.style.left = offer.location.x - MAP_PIN_WIDTH / 2 + 'px';
+  newMapPin.style.top = offer.location.y - MAP_PIN_HEIGHT - MAP_PIN_POINT + 'px';
   var newMapPinImg = document.createElement('img');
   newMapPinImg.src = offer.author.avatar;
   newMapPinImg.width = '40';
@@ -253,16 +249,21 @@ timeInField.addEventListener('change', function () {
 });
 
 var houseTypeField = document.querySelector('select#type');
-houseTypeField.addEventListener('change', function () {
-  updatePriceConstraints();
-});
 
-function updatePriceConstraints() {
-  var val = houseTypeField.value;
-  roomPriceField.setAttribute('min', TYPEHOUSE_MIN_PRICE[val]);
+function setFieldsSynced(fieldMaster, valuesMaster, fieldSub, valuesSub, callbackFunc) {
+  fieldMaster.addEventListener('change', function () {
+    var mv = fieldMaster.value;
+    var sv = valuesSub[valuesMaster.indexOf(mv)];
+    callbackFunc(fieldSub, sv);
+  });
 }
 
-updatePriceConstraints();
+setFieldsSynced(houseTypeField, SYNC_HOUSE_TYPES,
+    roomPriceField, SYNC_ROOM_PRICES, function (field, val) {
+      field.min = val;
+    });
+
+roomPriceField.min = SYNC_ROOM_PRICES[SYNC_HOUSE_TYPES.indexOf(houseTypeField.value)];
 
 var roomNumberField = document.querySelector('select#room_number');
 var guestNumberField = document.querySelector('select#capacity');
