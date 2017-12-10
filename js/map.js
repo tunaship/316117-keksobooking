@@ -19,6 +19,8 @@ var ESC_KEYCODE = 27;
 var ENTER_KEYCODE = 13;
 var SYNC_HOUSE_TYPES = ['bungalo', 'flat', 'house', 'palace'];
 var SYNC_ROOM_PRICES = [0, 1000, 5000, 10000];
+var SYNC_GUESTS = [['1'], ['1', '2'], ['1', '2', '3'], ['0']];
+var SYNC_ROOMS = ['1', '2', '3', '100'];
 
 function getRandomNum(min, max) {
   return Math.floor(Math.random() * (max - min) + min);
@@ -248,57 +250,46 @@ timeInField.addEventListener('change', function () {
   timeOutField.value = timeInField.value;
 });
 
-var houseTypeField = document.querySelector('select#type');
+timeOutField.addEventListener('change', function () {
+  timeInField.value = timeOutField.value;
+});
 
-function setFieldsSynced(fieldMaster, valuesMaster, fieldSub, valuesSub, callbackFunc) {
-  fieldMaster.addEventListener('change', function () {
-    var mv = fieldMaster.value;
-    var sv = valuesSub[valuesMaster.indexOf(mv)];
-    callbackFunc(fieldSub, sv);
-  });
+function syncFields(fieldMaster, valuesMaster, fieldSub, valuesSub, syncCallback) {
+  var mv = fieldMaster.value;
+  var index = valuesMaster.indexOf(mv);
+  if (index !== -1) {
+    var sv = valuesSub[index];
+    syncCallback(fieldSub, sv);
+  }
 }
 
-setFieldsSynced(houseTypeField, SYNC_HOUSE_TYPES,
+function setFieldsSynchronization(fieldMaster, valuesMaster, fieldSub, valuesSub, syncCallback) {
+  fieldMaster.addEventListener('input', function () {
+    syncFields(fieldMaster, valuesMaster, fieldSub, valuesSub, syncCallback);
+  });
+  syncFields(fieldMaster, valuesMaster, fieldSub, valuesSub, syncCallback);
+}
+
+var houseTypeField = document.querySelector('select#type');
+
+setFieldsSynchronization(houseTypeField, SYNC_HOUSE_TYPES,
     roomPriceField, SYNC_ROOM_PRICES, function (field, val) {
       field.min = val;
     });
 
-roomPriceField.min = SYNC_ROOM_PRICES[SYNC_HOUSE_TYPES.indexOf(houseTypeField.value)];
-
 var roomNumberField = document.querySelector('select#room_number');
 var guestNumberField = document.querySelector('select#capacity');
 
-function updateRoomCapacity() {
-  var roomNum = roomNumberField.value;
-  for (var i = 0; i < guestNumberField.length; i++) {
-    var guestOption = guestNumberField.children[i];
-    var guestNum = guestOption.value;
-    var optionAllowed = false;
-    if (guestNum === '0') {
-      optionAllowed = (roomNum === '100');
-    } else {
-      optionAllowed = (guestNum <= roomNum && roomNum !== '100');
-    }
-    guestOption.style.display = optionAllowed ? 'block' : 'none';
-  }
-
-  var currentGuestCapacity = guestNumberField.selectedIndex;
-  if (guestNumberField.children[currentGuestCapacity].style.display === 'none') {
-    for (i = 0; i < guestNumberField.length; i++) {
-      guestOption = guestNumberField.children[i];
-      if (guestOption.style.display === 'block') {
-        guestNumberField.selectedIndex = i;
-        break;
+setFieldsSynchronization(roomNumberField, SYNC_ROOMS,
+    guestNumberField, SYNC_GUESTS, function (field, val) {
+      for (var i = 0; i < guestNumberField.length; i++) {
+        var guestOption = guestNumberField.children[i];
+        guestOption.style.display = (val.indexOf(guestOption.value) !== -1) ? 'block' : 'none';
       }
-    }
-  }
-}
-
-updateRoomCapacity();
-
-roomNumberField.addEventListener('change', function () {
-  updateRoomCapacity();
-});
+      if (val.indexOf(guestNumberField.value) === -1) {
+        guestNumberField.value = val[0];
+      }
+    });
 
 var noticeForm = document.querySelector('.notice__form');
 var formFieldElements = noticeForm.querySelectorAll('input, select, textarea');
@@ -310,5 +301,3 @@ for (var i = 0; i < formFieldElements.length; i++) {
 function onInvalidInput(evt) {
   evt.target.style.border = 'dotted 2px #ff5635';
 }
-
-
