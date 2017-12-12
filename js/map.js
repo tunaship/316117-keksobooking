@@ -17,24 +17,22 @@ var MAP_PIN_WIDTH = 40;
 var MAP_PIN_POINT = 18;
 var ESC_KEYCODE = 27;
 var ENTER_KEYCODE = 13;
+var SYNC_HOUSE_TYPES = ['bungalo', 'flat', 'house', 'palace'];
+var SYNC_ROOM_PRICES = [0, 1000, 5000, 10000];
+var SYNC_GUESTS = [['1'], ['1', '2'], ['1', '2', '3'], ['0']];
+var SYNC_ROOMS = ['1', '2', '3', '100'];
+var SYNC_TIME_IN_HOURS = ['12:00', '13:00', '14:00'];
+var SYNC_TIME_OUT_HOURS = ['12:00', '13:00', '14:00'];
 
-function getRandomNum(min, max) {
+function getRandom(min, max) {
   return Math.floor(Math.random() * (max - min) + min);
-}
-
-function getRandomIndex(arr) {
-  return getRandomNum(0, arr.length);
-}
-
-function getRandomElement(arr) {
-  return arr[getRandomIndex(arr)];
 }
 
 function getRandomRange(arr, n) {
   var randomRange = [];
   var clonedArr = arr.slice();
   for (var i = 0; i < n; i++) {
-    var elemIndex = getRandomIndex(clonedArr);
+    var elemIndex = getRandom(0, clonedArr.length);
     randomRange.push(clonedArr[elemIndex]);
     clonedArr.splice(elemIndex, 1);
   }
@@ -56,8 +54,8 @@ function generateRandomOffers() {
   var avatarNumbers = getRandomRange(createRange(1, 8), 8);
 
   for (var i = 0; i < 8; i++) {
-    var locationX = getRandomNum(300, 900);
-    var locationY = getRandomNum(100, 500);
+    var locationX = getRandom(300, 900);
+    var locationY = getRandom(100, 500);
 
     var elemArr = {
       author: {
@@ -67,13 +65,13 @@ function generateRandomOffers() {
       offer: {
         title: randHouseList[i],
         address: locationX + ', ' + locationY,
-        type: getRandomElement(HOUSE_TYPES),
-        rooms: getRandomNum(1, 5),
-        guests: getRandomNum(1, 5),
-        checkin: getRandomElement(CHECKIN_HOURS),
-        checkout: getRandomElement(CHECKOUT_HOURS),
-        price: getRandomNum(1, 1000000),
-        features: getRandomRange(FEATURES, getRandomNum(0, FEATURES.length)),
+        type: HOUSE_TYPES[getRandom(0, HOUSE_TYPES.length)],
+        rooms: getRandom(1, 5),
+        guests: getRandom(1, 5),
+        checkin: CHECKIN_HOURS[getRandom(0, CHECKIN_HOURS.length)],
+        checkout: CHECKOUT_HOURS[getRandom(0, CHECKOUT_HOURS.length)],
+        price: getRandom(1, 1000000),
+        features: getRandomRange(FEATURES, getRandom(0, FEATURES.length)),
         description: '',
         photos: []
       },
@@ -96,8 +94,8 @@ var nextDiv = document.querySelector('.map__filters-container');
 function renderMapPin(offer) {
   var newMapPin = document.createElement('button');
   newMapPin.className = 'map__pin';
-  newMapPin.style = 'left: ' + (offer.location.x - MAP_PIN_WIDTH / 2) + 'px; top: ' +
-    (offer.location.y - MAP_PIN_HEIGHT - MAP_PIN_POINT) + 'px;';
+  newMapPin.style.left = offer.location.x - MAP_PIN_WIDTH / 2 + 'px';
+  newMapPin.style.top = offer.location.y - MAP_PIN_HEIGHT - MAP_PIN_POINT + 'px';
   var newMapPinImg = document.createElement('img');
   newMapPinImg.src = offer.author.avatar;
   newMapPinImg.width = '40';
@@ -131,7 +129,7 @@ function generateFeaturesList(arr) {
   return featureListItems;
 }
 
-var fieldSetList = document.getElementsByTagName('fieldset');
+var fieldSetList = document.querySelectorAll('fieldset');
 
 function setFormEnabled(enable) {
   for (var i = 0; i < fieldSetList.length; i++) {
@@ -205,5 +203,62 @@ function renderPopup(offerData) {
   newPopup.querySelector('.popup__avatar').setAttribute('src', offerData.author.avatar);
   newPopup.querySelector('.popup__close').addEventListener('click', closePopup);
   return newPopup;
+}
+
+function syncronizeFields(fieldMaster, valuesMaster, fieldSub, valuesSub, syncCallback) {
+  fieldMaster.addEventListener('input', setFieldsSync);
+  function setFieldsSync() {
+    var mv = fieldMaster.value;
+    var index = valuesMaster.indexOf(mv);
+    if (index !== -1) {
+      var sv = valuesSub[index];
+      syncCallback(fieldSub, sv);
+    }
+  }
+  setFieldsSync();
+}
+
+var timeInField = document.querySelector('select#timein');
+var timeOutField = document.querySelector('select#timeout');
+
+syncronizeFields(timeInField, SYNC_TIME_IN_HOURS, timeOutField, SYNC_TIME_OUT_HOURS, function (field, val) {
+  field.value = val;
+});
+
+syncronizeFields(timeOutField, SYNC_TIME_OUT_HOURS, timeInField, SYNC_TIME_IN_HOURS, function (field, val) {
+  field.value = val;
+});
+
+var houseTypeField = document.querySelector('select#type');
+var roomPriceField = document.querySelector('input#price');
+
+syncronizeFields(houseTypeField, SYNC_HOUSE_TYPES,
+    roomPriceField, SYNC_ROOM_PRICES, function (field, val) {
+      field.min = val;
+    });
+
+var roomNumberField = document.querySelector('select#room_number');
+var guestNumberField = document.querySelector('select#capacity');
+
+syncronizeFields(roomNumberField, SYNC_ROOMS,
+    guestNumberField, SYNC_GUESTS, function (field, val) {
+      for (var i = 0; i < guestNumberField.length; i++) {
+        var guestOption = guestNumberField.children[i];
+        guestOption.style.display = (val.indexOf(guestOption.value) !== -1) ? 'block' : 'none';
+      }
+      if (val.indexOf(guestNumberField.value) === -1) {
+        guestNumberField.value = val[0];
+      }
+    });
+
+
+var formFieldElements = document.querySelector('.notice__form').querySelectorAll('input, select, textarea');
+
+for (var i = 0; i < formFieldElements.length; i++) {
+  formFieldElements[i].addEventListener('invalid', onInvalidInput);
+}
+
+function onInvalidInput(evt) {
+  evt.target.style.border = 'dotted 2px #ff5635';
 }
 
