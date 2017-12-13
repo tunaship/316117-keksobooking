@@ -39,5 +39,5 @@
   mapPinMainElement.addEventListener('keydown', function (evt) {
     window.util.isEnterEvent(evt, mapActivate);
   });
-  
+
 })();

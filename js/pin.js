@@ -27,7 +27,6 @@
       }
       pin.classList.add('map__pin--active');
     }
-
   };
 
 })();
