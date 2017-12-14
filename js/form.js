@@ -20,10 +20,12 @@
           fieldSetList[i].setAttribute('disabled', '');
         }
       }
-    }
+    },
+    addressField: document.querySelector('input#address')
   };
 
   window.form.enableForm(false);
+
 
   function syncronizeFields(fieldMaster, valuesMaster, fieldSub, valuesSub, syncCallback) {
     fieldMaster.addEventListener('input', setFieldsSync);
@@ -37,6 +39,7 @@
     }
     setFieldsSync();
   }
+
 
   var timeInField = document.querySelector('select#timein');
   var timeOutField = document.querySelector('select#timeout');
