@@ -26,45 +26,29 @@
 
   window.form.enableForm(false);
 
-
-  function syncronizeFields(fieldMaster, valuesMaster, fieldSub, valuesSub, syncCallback) {
-    fieldMaster.addEventListener('input', setFieldsSync);
-    function setFieldsSync() {
-      var mv = fieldMaster.value;
-      var index = valuesMaster.indexOf(mv);
-      if (index !== -1) {
-        var sv = valuesSub[index];
-        syncCallback(fieldSub, sv);
-      }
-    }
-    setFieldsSync();
-  }
-
-
   var timeInField = document.querySelector('select#timein');
   var timeOutField = document.querySelector('select#timeout');
 
-  syncronizeFields(timeInField, SYNC_TIME_IN_HOURS, timeOutField, SYNC_TIME_OUT_HOURS, function (field, val) {
+  window.syncronizeFields(timeInField, timeOutField, SYNC_TIME_IN_HOURS, SYNC_TIME_OUT_HOURS, function (field, val) {
     field.value = val;
   });
 
-  syncronizeFields(timeOutField, SYNC_TIME_OUT_HOURS, timeInField, SYNC_TIME_IN_HOURS, function (field, val) {
+  window.syncronizeFields(timeOutField, timeInField, SYNC_TIME_OUT_HOURS, SYNC_TIME_IN_HOURS, function (field, val) {
     field.value = val;
   });
 
   var houseTypeField = document.querySelector('select#type');
   var roomPriceField = document.querySelector('input#price');
 
-  syncronizeFields(houseTypeField, SYNC_HOUSE_TYPES,
-      roomPriceField, SYNC_ROOM_PRICES, function (field, val) {
-        field.min = val;
-      });
+  window.syncronizeFields(houseTypeField, roomPriceField, SYNC_HOUSE_TYPES, SYNC_ROOM_PRICES, function (field, val) {
+    field.min = val;
+  });
 
   var roomNumberField = document.querySelector('select#room_number');
   var guestNumberField = document.querySelector('select#capacity');
 
-  syncronizeFields(roomNumberField, SYNC_ROOMS,
-      guestNumberField, SYNC_GUESTS, function (field, val) {
+  window.syncronizeFields(roomNumberField, guestNumberField, SYNC_ROOMS,
+      SYNC_GUESTS, function (field, val) {
         for (var i = 0; i < guestNumberField.length; i++) {
           var guestOption = guestNumberField.children[i];
           guestOption.style.display = (val.indexOf(guestOption.value) !== -1) ? 'block' : 'none';
