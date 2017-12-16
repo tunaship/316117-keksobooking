@@ -7,7 +7,7 @@
 
     var offer = window.data.offers[pin.dataset.offerIndex];
     window.card.closePopup();
-    pin.classList.add('map__pin--active');
+    window.pin.activatePin(pin);
     var popupElement = window.card.renderPopup(offer);
     mapElement.insertBefore(popupElement, filtersContainerElement);
 
