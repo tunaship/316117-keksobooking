@@ -34,6 +34,14 @@
         clonedArr.splice(elemIndex, 1);
       }
       return randomRange;
-    }
+    },
+    onError: function (errorMessage) {
+      var divForError = document.createElement('div');
+      var header = document.querySelector('header');
+      divForError.className = 'error__popup';
+      divForError.textContent = errorMessage;
+      document.body.insertBefore(divForError, header);
+    },
+    offers: []
   };
 })();

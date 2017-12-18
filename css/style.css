@@ -60,6 +60,26 @@ button[type=submit]:active
     background-color: #ff6d51;
 }
 
+.error__popup
+{
+  padding: 10px 5px;
+  position: absolute;
+  z-index: 100;
+  top: 40px;
+  left: 475px;
+  width: 350px;
+  height: 40px;
+  display: block;
+  background-color: rgb(248, 247, 247);
+  border: solid 5px #ff6d51;
+  border-radius: 10px;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.5);
+  font-family: Roboto, sans-serif;
+  font-size: 20px;
+  color: #353535;
+  text-align: center;
+}
+
 input[type=text],
 input[type=number],
 select,
@@ -450,6 +470,8 @@ textarea:focus
     display: inline-block;
 
     vertical-align: middle;
+
+    padding: 0px 2px;
 }
 
 .popup__avatar
@@ -497,6 +519,11 @@ textarea:focus
     color: #000;
 }
 
+.popup__pictures img
+{
+  width: 40px;
+  height: 40px;
+}
 .map__filters-container
 {
     width: 100%;
