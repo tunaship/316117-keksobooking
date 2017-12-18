@@ -1,8 +1,9 @@
 'use strict';
 (function () {
   var SERVER_URL = 'https://1510.dump.academy/keksobooking';
+  var SERVER_URL_DATA = 'https://1510.dump.academy/keksobooking/data';
 
-  function createRequest(onSuccess, onError) {
+  function createRequest(method, url, data, onSuccess, onError) {
     var request = new XMLHttpRequest();
     request.responseType = 'json';
     request.addEventListener('load', function (evt) {
@@ -38,19 +39,17 @@
       onError('Запрос не успел выполниться');
     });
     request.timeout = 10000;
-    return request;
+
+    request.open(method, url);
+    request.send(data);
   }
 
   window.backend = {
     load: function (onLoad, onError) {
-      var xhr = createRequest(onLoad, onError);
-      xhr.open('GET', SERVER_URL + '/data');
-      xhr.send();
+      createRequest('GET', SERVER_URL_DATA, '', onLoad, onError);
     },
     save: function (data, onLoad, onError) {
-      var xhr = createRequest(onLoad, onError);
-      xhr.open('POST', SERVER_URL);
-      xhr.send(data);
+      createRequest('POST', SERVER_URL, data, onLoad, onError);
     }
   };
 
