@@ -21,8 +21,12 @@
     mapElement.classList.remove('map--faded');
     formElement.classList.remove('notice__form--disabled');
     window.form.enableForm(true);
+    window.backend.load(function (data) {
+      window.util.offers = data;
+      pinsContainerElement.appendChild(renderMapPinsBlock());
+    },
+    window.util.onError);
 
-    pinsContainerElement.appendChild(renderMapPinsBlock());
     mapPinMainElement.removeEventListener('mouseup', mapActivate);
 
     mapPinMainElement.addEventListener('mousedown', function (evt) {
@@ -39,7 +43,7 @@
   }
 
   function renderMapPinsBlock() {
-    var offers = window.data.offers;
+    var offers = window.util.offers;
     var fragment = document.createDocumentFragment();
     for (var i = 0; i < offers.length; i++) {
       var pinElement = window.pin.renderMapPin(offers[i]);

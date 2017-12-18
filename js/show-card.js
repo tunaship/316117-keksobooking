@@ -5,11 +5,11 @@
 
   window.showCard = function (pin) {
 
-    var offer = window.data.offers[pin.dataset.offerIndex];
-    window.card.closePopup();
+    var offer = window.util.offers[pin.dataset.offerIndex];
+    window.card.closeCard();
     window.pin.activatePin(pin);
-    var popupElement = window.card.renderPopup(offer);
-    mapElement.insertBefore(popupElement, filtersContainerElement);
+    var cardElement = window.card.renderCard(offer);
+    mapElement.insertBefore(cardElement, filtersContainerElement);
 
   };
 

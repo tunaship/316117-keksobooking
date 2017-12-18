@@ -57,8 +57,8 @@
           guestNumberField.value = val[0];
         }
       });
-
-  var formFieldElements = document.querySelector('.notice__form').querySelectorAll('input, select, textarea');
+  var form = document.querySelector('.notice__form');
+  var formFieldElements = form.querySelectorAll('input, select, textarea');
 
   for (var i = 0; i < formFieldElements.length; i++) {
     formFieldElements[i].addEventListener('invalid', onInvalidInput);
@@ -68,4 +68,10 @@
     evt.target.style.border = 'dotted 2px #ff5635';
   }
 
+  form.addEventListener('submit', function (evt) {
+    window.backend.save(new FormData(form), function () {
+      form.reset();
+    }, window.util.onError);
+    evt.preventDefault();
+  });
 })();
