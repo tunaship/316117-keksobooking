@@ -1,6 +1,7 @@
 'use strict';
 (function () {
 
+  var i;
   var filtersContainer = document.querySelector('.map__filters-container');
   var houseTypeFilter = filtersContainer.querySelector('#housing-type');
   var housePriceFilter = filtersContainer.querySelector('#housing-price');
@@ -11,12 +12,12 @@
   function filterDisabled(filterValue) {
     return filterValue === 'any';
   }
-  function houseTypeTest(item) {
+  function typeFilter(item) {
     var filterValue = houseTypeFilter.value;
     return (filterDisabled(filterValue)) || (filterValue === item.offer.type);
   }
 
-  function housePriceTest(item) {
+  function priceFilter(item) {
     var filterValue = housePriceFilter.value;
     if (filterDisabled(filterValue)) {
       return true;
@@ -32,18 +33,18 @@
     return true;
   }
 
-  function houseRoomsTest(item) {
+  function roomFilter(item) {
     var filterValue = houseRoomsFilter.value;
     return (filterDisabled(filterValue)) || (filterValue === '' + item.offer.rooms);
   }
 
-  function houseGuestsTest(item) {
+  function guestFilter(item) {
     var filterValue = houseGuestFilter.value;
     return (filterDisabled(filterValue)) || (filterValue === '' + item.offer.guests);
   }
 
-  function featuresTest(item) {
-    for (var i = 0; i < featureInputs.length; i++) {
+  function featuresFilter(item) {
+    for (i = 0; i < featureInputs.length; i++) {
       var f = featureInputs[i];
       if (f.checked && !item.offer.features.includes(f.value)) {
         return false;
@@ -52,36 +53,37 @@
     return true;
   }
 
+  var filterChangeCallback = function () {};
+
+  houseTypeFilter.addEventListener('input', function () {
+    filterChangeCallback();
+  });
+  housePriceFilter.addEventListener('input', function () {
+    filterChangeCallback();
+  });
+  houseRoomsFilter.addEventListener('input', function () {
+    filterChangeCallback();
+  });
+  houseGuestFilter.addEventListener('input', function () {
+    filterChangeCallback();
+  });
+  for (i = 0; i < featureInputs.length; i++) {
+    featureInputs[i].addEventListener('change', function () {
+      filterChangeCallback();
+    });
+  }
+
   window.filter = {
-    offers: [],
-    filteredOffers: [],
     applyFilter: function (src) {
       return src.filter(function (elem) {
-        return houseTypeTest(elem) && housePriceTest(elem) &&
-          houseRoomsTest(elem) && houseGuestsTest(elem) && featuresTest(elem);
-      });
-    },
-    setupFilters: function (filterCallback) {
-      houseTypeFilter.addEventListener('input', function () {
-        window.filter.onFilterChange(filterCallback);
-      });
-      housePriceFilter.addEventListener('input', function () {
-        window.filter.onFilterChange(filterCallback);
-      });
-      houseRoomsFilter.addEventListener('input', function () {
-        window.filter.onFilterChange(filterCallback);
-      });
-      houseGuestFilter.addEventListener('input', function () {
-        window.filter.onFilterChange(filterCallback);
-      });
-      for (var i = 0; i < featureInputs.length; i++) {
-        featureInputs[i].addEventListener('change', function () {
-          window.filter.onFilterChange(filterCallback);
-        });
-      }
+        return typeFilter(elem) && priceFilter(elem) &&
+          roomFilter(elem) && guestFilter(elem) && featuresFilter(elem);
+      }).slice(0, 5);
     },
     onFilterChange: function (filterCallback) {
-      window.util.debounce(filterCallback);
+      filterChangeCallback = function () {
+        window.util.debounce(filterCallback);
+      };
     }
   };
 })();

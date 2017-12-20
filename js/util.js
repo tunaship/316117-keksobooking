@@ -17,26 +17,6 @@
         action();
       }
     },
-    getRandom: function (min, max) {
-      return Math.floor(Math.random() * (max - min) + min);
-    },
-    createRange: function (min, max) {
-      var range = [];
-      for (var i = min; i <= max; i++) {
-        range.push(i);
-      }
-      return range;
-    },
-    getRandomRange: function (arr, n) {
-      var randomRange = [];
-      var clonedArr = arr.slice();
-      for (var i = 0; i < n; i++) {
-        var elemIndex = window.util.getRandom(0, clonedArr.length);
-        randomRange.push(clonedArr[elemIndex]);
-        clonedArr.splice(elemIndex, 1);
-      }
-      return randomRange;
-    },
     onError: function (errorMessage) {
       var divForError = document.createElement('div');
       var header = document.querySelector('header');

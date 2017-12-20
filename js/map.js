@@ -8,33 +8,32 @@
   var MIN_LIMIT_Y = 100;
   var map = document.querySelector('.map');
   var mapPinMain = document.querySelector('.map__pin--main');
-  var form = document.querySelector('.notice__form');
   var pinsContainer = document.querySelector('.map__pins');
   var startCoords;
+  var loadedOffers = [];
+
 
   mapPinMain.addEventListener('mouseup', mapActivate);
   mapPinMain.addEventListener('keydown', function (evt) {
     window.util.isEnterEvent(evt, mapActivate);
   });
 
-  function updateMap() {
-    window.filter.filteredOffers = window.filter.applyFilter(window.filter.offers);
-    renderMapPinsBlock();
+  function onDataLoad(data) {
+    loadedOffers = data;
+    window.filter.onFilterChange(updateMap);
+    updateMap();
   }
 
-  function onDataLoad(data) {
-    window.filter.offers = data;
-    window.filter.setupFilters(function () {
-      updateMap();
-    });
-    updateMap();
+  function updateMap() {
+    window.pin.offers = window.filter.applyFilter(loadedOffers);
+    renderMapPinsBlock();
   }
 
   function mapActivate() {
     map.classList.remove('map--faded');
-    form.classList.remove('notice__form--disabled');
-    window.form.enableForm(true);
     window.backend.load(onDataLoad, window.util.onError);
+
+    window.form.enableForm(true);
 
     mapPinMain.removeEventListener('mouseup', mapActivate);
 
@@ -58,16 +57,14 @@
         pinsContainer.removeChild(btns[i]);
       }
     }
-    var offers = window.filter.filteredOffers;
-    window.pin.offers = offers.slice(0, 5);
-    offers = window.pin.offers;
+    var offers = window.pin.offers;
     var fragment = document.createDocumentFragment();
     for (var i = 0; i < offers.length; i++) {
       var newPin = window.pin.renderMapPin(offers[i]);
       newPin.dataset.offerIndex = i;
       newPin.addEventListener('click', (function (pin) {
         return function () {
-          window.showCard(pin);
+          window.card.showCard(pin);
         };
       })(newPin));
       fragment.appendChild(newPin);

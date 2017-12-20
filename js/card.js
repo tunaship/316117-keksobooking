@@ -9,6 +9,7 @@
   };
 
   var map = document.querySelector('.map');
+  var filtersContainer = document.querySelector('.map__filters-container');
   var cardTemplate = document.querySelector('template').content;
 
   window.card = {
@@ -40,6 +41,13 @@
         map.removeChild(btn);
         map.removeChild(article);
       }
+    },
+    showCard: function (pin) {
+      var offer = window.pin.offers[pin.dataset.offerIndex];
+      window.card.closeCard();
+      window.pin.activatePin(pin);
+      var newCard = window.card.renderCard(offer);
+      map.insertBefore(newCard, filtersContainer);
     }
   };
 
