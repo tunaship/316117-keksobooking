@@ -17,14 +17,17 @@
     window.util.isEnterEvent(evt, mapActivate);
   });
 
+  function updateMap() {
+    window.filter.filteredOffers = window.filter.applyFilter(window.filter.offers);
+    renderMapPinsBlock();
+  }
+
   function onDataLoad(data) {
     window.filter.offers = data;
     window.filter.setupFilters(function () {
-      window.filter.filteredOffers = window.filter.applyFilter(data);
-      renderMapPinsBlock();
+      updateMap();
     });
-    window.filter.filteredOffers = window.filter.applyFilter(data);
-    renderMapPinsBlock();
+    updateMap();
   }
 
   function mapActivate() {
