@@ -58,10 +58,10 @@
         }
       });
   var form = document.querySelector('.notice__form');
-  var formFieldElements = form.querySelectorAll('input, select, textarea');
+  var formFields = form.querySelectorAll('input, select, textarea');
 
-  for (var i = 0; i < formFieldElements.length; i++) {
-    formFieldElements[i].addEventListener('invalid', onInvalidInput);
+  for (var i = 0; i < formFields.length; i++) {
+    formFields[i].addEventListener('invalid', onInvalidInput);
   }
 
   function onInvalidInput(evt) {
@@ -74,4 +74,45 @@
     }, window.util.onError);
     evt.preventDefault();
   });
+
+  var avatarContainer = document.querySelector('.notice__preview');
+  var avatarPhoto = document.querySelector('label.drop-zone');
+  avatarPhoto.addEventListener('dragenter', onDragEnter, false);
+  avatarPhoto.addEventListener('dragover', onDragOver, false);
+  avatarPhoto.addEventListener('drop', function (evt) {
+    evt.stopPropagation();
+    evt.preventDefault();
+
+    var dt = evt.dataTransfer;
+    var files = dt.files;
+    handleFiles(files, avatarContainer);
+    evt.target.classList.add('hidden');
+  }, false);
+
+  function onDragEnter(evt) {
+    evt.target.style.backgroundColor = 'pink';
+    evt.stopPropagation();
+    evt.preventDefault();
+  }
+  function onDragOver(evt) {
+    evt.stopPropagation();
+    evt.preventDefault();
+  }
+
+  function handleFiles(files, container) { // планируется универсальной, в т.ч. для фоток жилья
+    for (i = 0; i < files.length; i++) {
+      var file = files[i];
+      var img = container.querySelector('img');
+      img.file = file;
+
+      var reader = new FileReader();
+      reader.onload = (function (aImg) {
+        return function (evt) {
+          aImg.src = evt.target.result;
+        };
+      })(img);
+      reader.readAsDataURL(file);
+    }
+  }
+
 })();

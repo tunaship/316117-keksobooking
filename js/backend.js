@@ -20,7 +20,7 @@
           error = 'Ничего не найдено. Ошибка ' + xhr.status;
           break;
         case 500:
-          error = 'Ошибка сервера ' + xhr.status;
+          error = 'Сервер недоступен. Ошибка ' + xhr.status;
           break;
 
         default:
