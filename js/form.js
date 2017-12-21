@@ -168,6 +168,7 @@
 
   form.addEventListener('submit', function (evt) {
     window.backend.save(new FormData(form), function () {
+      window.util.notifyOnSuccess();
       form.reset();
       onFormReset();
     }, window.util.onError);
