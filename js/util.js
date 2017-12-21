@@ -3,7 +3,7 @@
 (function () {
   var ESC_KEYCODE = 27;
   var ENTER_KEYCODE = 13;
-  var DEBOUNCE_INTERVAL = 500;
+  var TIMER = 500;
   var lastTimeout;
 
   window.util = {
@@ -28,7 +28,7 @@
       if (lastTimeout) {
         window.clearTimeout(lastTimeout);
       }
-      lastTimeout = window.setTimeout(funс, DEBOUNCE_INTERVAL);
+      lastTimeout = window.setTimeout(funс, TIMER);
     }
   };
 })();

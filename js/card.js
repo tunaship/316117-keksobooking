@@ -55,22 +55,22 @@
     window.util.isEscEvent(evt, window.card.closeCard);
   });
 
-  function generateFeaturesList(arr) {
+  function generateFeaturesList(features) {
     var featureListItems = document.createDocumentFragment();
-    for (var i = 0; i < arr.length; i++) {
+    for (var i = 0; i < features.length; i++) {
       var li = document.createElement('li');
-      li.className = 'feature feature--' + arr[i];
+      li.className = 'feature feature--' + features[i];
       featureListItems.appendChild(li);
     }
     return featureListItems;
   }
 
-  function generatePhotosList(arr) {
+  function generatePhotosList(features) {
     var photoListItems = document.createDocumentFragment();
-    for (var i = 0; i < arr.length; i++) {
+    for (var i = 0; i < features.length; i++) {
       var li = document.createElement('li');
       var img = document.createElement('img');
-      img.src = arr[i];
+      img.src = features[i];
       li.appendChild(img);
       photoListItems.appendChild(li);
     }

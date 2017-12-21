@@ -10,7 +10,7 @@
   var SYNC_TIME_OUT_HOURS = ['12:00', '13:00', '14:00'];
 
   var noticeForm = document.querySelector('.notice__form');
-  var fieldSetList = document.querySelectorAll('fieldset');
+  var fieldsets = document.querySelectorAll('fieldset');
 
 
   window.form = {
@@ -20,7 +20,7 @@
         avatarPhoto.addEventListener('dragenter', onDragEnter, false);
         avatarPhoto.addEventListener('dragleave', onDragLeave, false);
         avatarPhoto.addEventListener('dragover', onDragOver, false);
-        avatarPhoto.addEventListener('drop', onDrop, false);
+        avatarPhoto.addEventListener('drop', onAvatarImageDrop, false);
         photoDropZone.addEventListener('dragover', onDragOver, false);
         photoDropZone.addEventListener('dragenter', onDragEnter, false);
         photoDropZone.addEventListener('dragleave', onDragLeave, false);
@@ -30,11 +30,11 @@
       } else {
         noticeForm.classList.add('notice__form--disabled');
       }
-      for (var i = 0; i < fieldSetList.length; i++) {
+      for (var i = 0; i < fieldsets.length; i++) {
         if (flagEnable) {
-          fieldSetList[i].removeAttribute('disabled');
+          fieldsets[i].removeAttribute('disabled');
         } else {
-          fieldSetList[i].setAttribute('disabled', '');
+          fieldsets[i].setAttribute('disabled', '');
         }
       }
     },
@@ -75,21 +75,12 @@
         }
       });
   var form = document.querySelector('.notice__form');
-  var formFields = form.querySelectorAll('input, select, textarea');
-
-  for (var i = 0; i < formFields.length; i++) {
-    formFields[i].addEventListener('invalid', onInvalidInput);
-  }
-
-  function onInvalidInput(evt) {
-    evt.target.style.border = 'dotted 2px #ff5635';
-  }
 
   var avatarContainer = document.querySelector('.notice__preview');
   var avatarPhoto = document.querySelector('.notice__header').querySelector('label.drop-zone');
   var photoContainer = document.querySelector('.form__photo-container');
   var photoDropZone = photoContainer.querySelector('label.drop-zone');
-  var divContainer = photoContainer.querySelector('div.container');
+  var housePhotosContainer = photoContainer.querySelector('div.container');
   var housePhotosInput = document.querySelector('input#images');
   var avatarInput = document.querySelector('input#avatar');
 
@@ -109,7 +100,7 @@
     evt.preventDefault();
   }
 
-  function onDrop(evt) {
+  function onAvatarImageDrop(evt) {
     evt.stopPropagation();
     evt.preventDefault();
     evt.target.style.backgroundColor = '';
@@ -139,11 +130,11 @@
     evt.target.style.backgroundColor = '';
     var dt = evt.dataTransfer;
     var files = dt.files;
-    putImagesToContainer(files, divContainer);
+    putImagesToContainer(files, housePhotosContainer);
   }
 
   function putImagesToContainer(files, container) {
-    for (i = 0; i < files.length; i++) {
+    for (var i = 0; i < files.length; i++) {
       var file = files[i];
       var li = document.createElement('li');
       var img = document.createElement('img');
@@ -155,7 +146,7 @@
 
   function onPullHouseImages() {
     var fileInput = document.querySelector('input#images');
-    putImagesToContainer(fileInput.files, divContainer);
+    putImagesToContainer(fileInput.files, housePhotosContainer);
   }
 
 
