@@ -725,6 +725,7 @@ textarea:focus
     display: flex;
 
     min-height: 70px;
+
 }
 
 .notice__info
@@ -755,7 +756,25 @@ textarea:focus
 
 .form__photo-container
 {
-    width: 140px;
+    width: 500px;
+    height: 200px;
+    overflow: hidden;
+
+}
+
+.form__photo-container li
+{
+margin: 2px;
+padding: 2px 5px;
+list-style-type: none;
+display: table-cell;
+float: left;
+}
+
+.form__photo-container img
+{
+  width: 60px;
+  height: 60px;
 }
 
 .form__element--submit

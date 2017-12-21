@@ -8,7 +8,8 @@
     'house': 'Дом'
   };
 
-  var mapCardElement = document.querySelector('.map');
+  var map = document.querySelector('.map');
+  var filtersContainer = document.querySelector('.map__filters-container');
   var cardTemplate = document.querySelector('template').content;
 
   window.card = {
@@ -22,9 +23,9 @@
         offerData.offer.guests + ' гостей';
       newCard.querySelector('h4 + p + p').textContent = 'Заезд после ' + offerData.offer.checkin + ' выезд до ' +
         offerData.offer.checkout;
-      var f = newCard.querySelector('.popup__features');
-      f.textContent = '';
-      f.appendChild(generateFeaturesList(offerData.offer.features));
+      var features = newCard.querySelector('.popup__features');
+      features.textContent = '';
+      features.appendChild(generateFeaturesList(offerData.offer.features));
       var photos = newCard.querySelector('.popup__pictures');
       photos.textContent = '';
       photos.appendChild(generatePhotosList(offerData.offer.photos));
@@ -34,12 +35,19 @@
       return newCard;
     },
     closeCard: function () {
-      var article = mapCardElement.querySelector('.map__card');
+      var article = map.querySelector('.map__card');
       if (article !== null) {
         var btn = article.nextElementSibling;
-        mapCardElement.removeChild(btn);
-        mapCardElement.removeChild(article);
+        map.removeChild(btn);
+        map.removeChild(article);
       }
+    },
+    showCard: function (pin) {
+      var offer = window.pin.offers[pin.dataset.offerIndex];
+      window.card.closeCard();
+      window.pin.activatePin(pin);
+      var newCard = window.card.renderCard(offer);
+      map.insertBefore(newCard, filtersContainer);
     }
   };
 
@@ -68,4 +76,5 @@
     }
     return photoListItems;
   }
+
 })();

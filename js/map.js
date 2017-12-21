@@ -6,30 +6,38 @@
   var MAIN_PIN_POINT = 22;
   var MAX_LIMIT_Y = 500;
   var MIN_LIMIT_Y = 100;
-  var mapElement = document.querySelector('.map');
-  var mapPinMainElement = document.querySelector('.map__pin--main');
-  var formElement = document.querySelector('.notice__form');
-  var pinsContainerElement = document.querySelector('.map__pins');
+  var map = document.querySelector('.map');
+  var mapPinMain = document.querySelector('.map__pin--main');
+  var pinsContainer = document.querySelector('.map__pins');
   var startCoords;
+  var loadedOffers = [];
 
-  mapPinMainElement.addEventListener('mouseup', mapActivate);
-  mapPinMainElement.addEventListener('keydown', function (evt) {
+
+  mapPinMain.addEventListener('mouseup', mapActivate);
+  mapPinMain.addEventListener('keydown', function (evt) {
     window.util.isEnterEvent(evt, mapActivate);
   });
 
+  function onDataLoad(data) {
+    loadedOffers = data;
+    window.filter.onFilterChange(updateMap);
+    updateMap();
+  }
+
+  function updateMap() {
+    window.pin.offers = window.filter.applyFilter(loadedOffers);
+    renderMapPinsBlock();
+  }
+
   function mapActivate() {
-    mapElement.classList.remove('map--faded');
-    formElement.classList.remove('notice__form--disabled');
+    map.classList.remove('map--faded');
+    window.backend.load(onDataLoad, window.util.onError);
+
     window.form.enableForm(true);
-    window.backend.load(function (data) {
-      window.util.offers = data;
-      pinsContainerElement.appendChild(renderMapPinsBlock());
-    },
-    window.util.onError);
 
-    mapPinMainElement.removeEventListener('mouseup', mapActivate);
+    mapPinMain.removeEventListener('mouseup', mapActivate);
 
-    mapPinMainElement.addEventListener('mousedown', function (evt) {
+    mapPinMain.addEventListener('mousedown', function (evt) {
       evt.preventDefault();
       startCoords = {
         x: evt.clientX,
@@ -43,26 +51,32 @@
   }
 
   function renderMapPinsBlock() {
-    var offers = window.util.offers;
+    var btns = pinsContainer.querySelectorAll('.map__pin');
+    for (i = 0; i < btns.length; i++) {
+      if (!btns[i].classList.contains('map__pin--main')) {
+        pinsContainer.removeChild(btns[i]);
+      }
+    }
+    var offers = window.pin.offers;
     var fragment = document.createDocumentFragment();
     for (var i = 0; i < offers.length; i++) {
-      var pinElement = window.pin.renderMapPin(offers[i]);
-      pinElement.dataset.offerIndex = i;
-      pinElement.addEventListener('click', (function (pin) {
+      var newPin = window.pin.renderMapPin(offers[i]);
+      newPin.dataset.offerIndex = i;
+      newPin.addEventListener('click', (function (pin) {
         return function () {
-          window.showCard(pin);
+          window.card.showCard(pin);
         };
-      })(pinElement));
-      fragment.appendChild(pinElement);
+      })(newPin));
+      fragment.appendChild(newPin);
     }
-    return fragment;
+    pinsContainer.appendChild(fragment);
   }
 
   function onMouseMove(moveEvt) {
     moveEvt.preventDefault();
 
-    var leftLimitX = pinsContainerElement.clientLeft;
-    var rightLimitX = pinsContainerElement.clientWidth;
+    var leftLimitX = pinsContainer.clientLeft;
+    var rightLimitX = pinsContainer.clientWidth;
 
     var shift = {
       x: startCoords.x - moveEvt.clientX,
@@ -74,22 +88,22 @@
       y: moveEvt.clientY
     };
 
-    var mainPinCoordX = mapPinMainElement.offsetLeft - shift.x;
-    var mainPinCoordY = mapPinMainElement.offsetTop - shift.y;
+    var mainPinCoordX = mapPinMain.offsetLeft - shift.x;
+    var mainPinCoordY = mapPinMain.offsetTop - shift.y;
 
     var deltaY = MAIN_PIN_HEIGHT + MAIN_PIN_POINT;
     var pointCoordY = mainPinCoordY + deltaY;
 
-    mapPinMainElement.style.left = Math.min(rightLimitX, Math.max(leftLimitX, mainPinCoordX)) + 'px';
+    mapPinMain.style.left = Math.min(rightLimitX, Math.max(leftLimitX, mainPinCoordX)) + 'px';
 
-    mapPinMainElement.style.top = (Math.min(MAX_LIMIT_Y, Math.max(MIN_LIMIT_Y, pointCoordY)) - deltaY) + 'px';
+    mapPinMain.style.top = (Math.min(MAX_LIMIT_Y, Math.max(MIN_LIMIT_Y, pointCoordY)) - deltaY) + 'px';
   }
 
   function onMouseUp(upEvt) {
     upEvt.preventDefault();
     document.removeEventListener('mousemove', onMouseMove);
-    window.form.addressField.value = 'x: ' + mapPinMainElement.offsetLeft
-      + ', y: ' + (mapPinMainElement.offsetTop + (MAIN_PIN_HEIGHT + MAIN_PIN_POINT));
+    window.form.addressField.value = 'x: ' + mapPinMain.offsetLeft
+      + ', y: ' + (mapPinMain.offsetTop + (MAIN_PIN_HEIGHT + MAIN_PIN_POINT));
   }
 })();
 
