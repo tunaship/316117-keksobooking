@@ -78,7 +78,7 @@
       return src.filter(function (elem) {
         return filterByType(elem) && filterByPrice(elem) &&
           filterByRooms(elem) && filterByGuests(elem) && filterByFeatures(elem);
-      }).slice(VISIBLE_PINS_MIN_NUM, VISIBLE_PINS_MAX_NUM);
+      }).slice(0, VISIBLE_PINS_MAX_NUM);
     },
     onFilterChange: function (callback) {
       filterChangeCallback = callback;
