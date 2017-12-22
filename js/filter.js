@@ -3,7 +3,6 @@
   var LOW_PRICE = 10000;
   var HIGH_PRICE = 50000;
   var VISIBLE_PINS_MAX_NUM = 5;
-  var VISIBLE_PINS_MIN_NUM = 0;
   var filtersContainer = document.querySelector('.map__filters-container');
   var houseTypeFilter = filtersContainer.querySelector('#housing-type');
   var housePriceFilter = filtersContainer.querySelector('#housing-price');

@@ -65,12 +65,12 @@
     return featureListItems;
   }
 
-  function generatePhotosList(features) {
+  function generatePhotosList(photos) {
     var photoListItems = document.createDocumentFragment();
-    for (var i = 0; i < features.length; i++) {
+    for (var i = 0; i < photos.length; i++) {
       var li = document.createElement('li');
       var img = document.createElement('img');
-      img.src = features[i];
+      img.src = photos[i];
       li.appendChild(img);
       photoListItems.appendChild(li);
     }
