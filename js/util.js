@@ -3,7 +3,7 @@
 (function () {
   var ESC_KEYCODE = 27;
   var ENTER_KEYCODE = 13;
-  var DEBOUNCE_INTERVAL = 500;
+  var TIMER = 500;
   var lastTimeout;
 
   window.util = {
@@ -19,16 +19,26 @@
     },
     onError: function (errorMessage) {
       var divForError = document.createElement('div');
-      var header = document.querySelector('header');
       divForError.className = 'error__popup';
       divForError.textContent = errorMessage;
-      document.body.insertBefore(divForError, header);
+      document.body.appendChild(divForError);
+    },
+    notifyOnSuccess: function () {
+      var divForSuccess = document.createElement('div');
+      divForSuccess.className = 'success__popup';
+      divForSuccess.textContent = 'Ваше объявление успешно отправлено';
+      document.body.appendChild(divForSuccess);
+      setTimeout(window.util.closeNotification, 1600);
+    },
+    closeNotification: function () {
+      var div = document.querySelector('div.success__popup');
+      document.body.removeChild(div);
     },
     debounce: function (funс) {
       if (lastTimeout) {
         window.clearTimeout(lastTimeout);
       }
-      lastTimeout = window.setTimeout(funс, DEBOUNCE_INTERVAL);
+      lastTimeout = window.setTimeout(funс, TIMER);
     }
   };
 })();

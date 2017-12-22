@@ -13,9 +13,9 @@
   var loadedOffers = [];
 
 
-  mapPinMain.addEventListener('mouseup', mapActivate);
+  mapPinMain.addEventListener('mouseup', activateMap);
   mapPinMain.addEventListener('keydown', function (evt) {
-    window.util.isEnterEvent(evt, mapActivate);
+    window.util.isEnterEvent(evt, activateMap);
   });
 
   function onDataLoad(data) {
@@ -29,13 +29,13 @@
     renderMapPinsBlock();
   }
 
-  function mapActivate() {
+  function activateMap() {
     map.classList.remove('map--faded');
     window.backend.load(onDataLoad, window.util.onError);
 
     window.form.enableForm(true);
 
-    mapPinMain.removeEventListener('mouseup', mapActivate);
+    mapPinMain.removeEventListener('mouseup', activateMap);
 
     mapPinMain.addEventListener('mousedown', function (evt) {
       evt.preventDefault();
@@ -51,11 +51,9 @@
   }
 
   function renderMapPinsBlock() {
-    var btns = pinsContainer.querySelectorAll('.map__pin');
+    var btns = pinsContainer.querySelectorAll('.map__pin:not(.map__pin--main)');
     for (i = 0; i < btns.length; i++) {
-      if (!btns[i].classList.contains('map__pin--main')) {
-        pinsContainer.removeChild(btns[i]);
-      }
+      pinsContainer.removeChild(btns[i]);
     }
     var offers = window.pin.offers;
     var fragment = document.createDocumentFragment();

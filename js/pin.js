@@ -21,7 +21,7 @@
       return newMapPin;
     },
     activatePin: function (pin) {
-      var activePins = document.querySelector('.map__pins').querySelectorAll('.map__pin--active');
+      var activePins = document.querySelectorAll('.map__pin--active');
       for (var i = 0; i < activePins.length; i++) {
         activePins[i].classList.remove('map__pin--active');
       }
